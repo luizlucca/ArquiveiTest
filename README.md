@@ -64,3 +64,7 @@ A arquitetura foi pensada para termos resiliencia e escalabilidade.
 - Na aplicação *arquivei*, adiconarmos um circuit breaker que, como fallback, salva as notas em um diretorio. Depois, quando voltar, consome as notas do diretorio e publica na fila.
 - No *worker*, salvar no banco e tbm em um sistema de arquivos, de modo que o o nome do arquivo seja a chave de acesso e o conteúdo o valor da nota. Adicionar um circuit breaker na consulta ao banco que, como fallback, pega os dados so sitema de arquivos
 
+
+### Arquitetura desenvolvida
+![alt text](https://github.com/luizlucca/ArquiveiTest/blob/master/Arquitetura.png)
+
