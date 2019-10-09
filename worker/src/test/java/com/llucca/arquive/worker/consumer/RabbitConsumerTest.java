@@ -64,7 +64,7 @@ public class RabbitConsumerTest {
 
         Mockito.verify(redisCacheService, times(1)).getFromChache(Mockito.any());
         Mockito.verify(redisCacheService, times(0)).putToChache(Mockito.any(), Mockito.any());
-        Mockito.verify(nfeRepository, times(1)).save(Mockito.any());
+        Mockito.verify(nfeRepository, times(0)).save(Mockito.any());
     }
 
     @Test

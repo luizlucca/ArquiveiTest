@@ -46,6 +46,7 @@ public class NfeService {
                 Optional<Nfe> bdNfe = nfeRepository.findByAccessKey(accessKey);
                 if (bdNfe.isPresent()) {
                     value = bdNfe.get().getTotalValue();
+                    redisCache.putToChache(bdNfe.get().getAccessKey(), bdNfe.get().getTotalValue());
                 }
             }
             return value;

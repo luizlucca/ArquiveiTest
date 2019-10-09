@@ -64,16 +64,17 @@ public class RabbitConsumer implements Consumer {
 
             Nfe nfe = nfeAdapter.convertFromNfeMessage(message.getBody());
 
-            Nfe savedNfe;
-            try {
-                savedNfe = nfeRepository.save(nfe);
-            } catch (Exception e) {
-                log.error("Error on persist entity to DB", e);
-                throw new DatabaseAccessException("Error on persist entity to DB");
-            }
-
-            if (redisCacheService.getFromChache(savedNfe.getAccessKey()) == null) {
+            if (redisCacheService.getFromChache(nfe.getAccessKey()) == null) {
                 log.debug("persist DB for new record");
+
+                Nfe savedNfe;
+                try {
+                    savedNfe = nfeRepository.save(nfe);
+                } catch (Exception e) {
+                    log.error("Error on persist entity to DB", e);
+                    throw new DatabaseAccessException("Error on persist entity to DB");
+                }
+
                 redisCacheService.putToChache(savedNfe.getAccessKey(), savedNfe.getTotalValue());
             }
 
