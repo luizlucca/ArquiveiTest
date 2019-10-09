@@ -3,6 +3,7 @@ package com.llucca.arquivei.controller;
 import com.llucca.arquivei.service.NfeService;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -23,8 +24,13 @@ public class NfeController {
 
     @GetMapping("/{accessKey}")
     @ApiOperation(value = "Busca do valor de uma nota fiscal através da chave de acesso")
-    public Double findNfe(@PathVariable("accessKey") String accessKey) {
-        return nfeService.findByNfe(accessKey);
+    public ResponseEntity findNfe(@PathVariable("accessKey") String accessKey) {
+        Double value = nfeService.findByNfe(accessKey);
+
+        if(value!=null){
+            return ResponseEntity.ok(value);
+        }
+        return  ResponseEntity.badRequest().body("Ops! Infelizmente sua nota fiscal ainda não está em nossa base de dados. Tente novamente mais tarde");
     }
 
     @GetMapping("/process")

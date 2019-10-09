@@ -2,6 +2,7 @@ package com.llucca.arquivei.service;
 
 import com.llucca.arquivei.client.NfeClient;
 import com.llucca.arquivei.exception.ArquiveApiException;
+import com.llucca.arquivei.exception.BaseException;
 import com.llucca.arquivei.exception.DatabaseAccessException;
 import com.llucca.arquivei.model.Nfe;
 import com.llucca.arquivei.repository.NfeRepository;
@@ -41,21 +42,23 @@ public class NfeService {
             log.warn("Fail to contact or recover data from cache. I will trie DB.", e);
         }
 
-        try {
-            if (value == null) {
-                Optional<Nfe> bdNfe = nfeRepository.findByAccessKey(accessKey);
-                if (bdNfe.isPresent()) {
-                    value = bdNfe.get().getTotalValue();
-                    redisCache.putToChache(bdNfe.get().getAccessKey(), bdNfe.get().getTotalValue());
-                }
-            }
-            return value;
 
-        } catch (Exception e) {
-            log.error("Error on recover data from DB. Aborting...", e);
-            throw new DatabaseAccessException("Error on recover data from DB. Aborting...");
+        if (value == null) {
+            Optional<Nfe> bdNfe;
+            try {
+                bdNfe = nfeRepository.findByAccessKey(accessKey);
+            } catch (BaseException e) {
+                log.error("Error on recover data from DB. Aborting...", e);
+                throw new DatabaseAccessException("Error on recover data from DB. Aborting...");
+            }
+
+            if (bdNfe.isPresent()) {
+                value = bdNfe.get().getTotalValue();
+                redisCache.putToChache(bdNfe.get().getAccessKey(), bdNfe.get().getTotalValue());
+            }
         }
 
+        return value;
     }
 
     public void fetchFromArquiveiApi() {
